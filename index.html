@@ -1,0 +1,451 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accident Days</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;500&display=swap");
+
+      :root {
+        --bg-1: #0a0d12;
+        --bg-2: #0e1218;
+        --ink: #e9ebef;
+        --muted: #9aa3ad;
+        --card: rgba(14, 18, 24, 0.94);
+        --accent: #c5a66b;
+        --accent-2: #7b6d63;
+        --ring: rgba(165, 175, 190, 0.35);
+        --outline: rgba(255, 255, 255, 0.07);
+        --shadow: 0 26px 70px rgba(2, 4, 8, 0.55);
+        --radius: 18px;
+        --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+        --font-mono: "JetBrains Mono", "Consolas", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-display);
+        color: var(--ink);
+        min-height: 100vh;
+        background: radial-gradient(1000px 600px at 8% -10%, rgba(120, 130, 150, 0.18) 0%, transparent 60%),
+          radial-gradient(1100px 700px at 105% 8%, rgba(120, 100, 90, 0.18) 0%, transparent 65%),
+          linear-gradient(180deg, var(--bg-1), #0b0f15 45%, var(--bg-2) 100%);
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        padding: 36px 16px 56px;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 64px 64px;
+        opacity: 0.18;
+        z-index: 0;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+      }
+
+      .shell {
+        width: min(920px, 100%);
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+        min-height: calc(100vh - 92px);
+      }
+
+      .hero {
+        display: grid;
+        gap: 24px;
+      }
+
+      .hero.reverse .headline {
+        order: 2;
+      }
+
+      .hero.reverse .card {
+        order: 1;
+      }
+
+      .page-title {
+        margin: 0 0 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.28em;
+        font-size: clamp(2.55rem, 5vw, 3rem);
+        font-family: var(--font-mono);
+        text-align: center;
+      }
+
+      .page-title-text {
+        display: inline-block;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        background-size: 200% 100%;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: footnoteSweep 7.2s ease-in-out infinite;
+      }
+
+      .headline {
+        display: grid;
+        gap: 6px;
+      }
+
+      .headline .eyebrow {
+        letter-spacing: 0.2em;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--accent-2);
+        font-family: var(--font-mono);
+      }
+
+      .headline h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.05;
+      }
+
+      .headline p {
+        margin: 0;
+        font-size: clamp(1rem, 1.6vw, 1.2rem);
+        color: var(--muted);
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: clamp(20px, 4vw, 36px);
+        display: grid;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--outline);
+        backdrop-filter: blur(14px);
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: -40% 0 auto 0;
+        height: 140%;
+        background: radial-gradient(circle at top, rgba(120, 130, 150, 0.12), transparent 65%);
+        opacity: 0.22;
+        pointer-events: none;
+      }
+
+      .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        border: 1px solid rgba(160, 170, 185, 0.16);
+        box-shadow: 0 0 0 0 rgba(120, 130, 150, 0.2);
+        opacity: 0.65;
+        pointer-events: none;
+      }
+
+      .ring::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        background-size: 200% 100%;
+        animation: footnoteSweep 6s ease-in-out infinite;
+        opacity: 0.22;
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .stat {
+        display: grid;
+        gap: 8px;
+      }
+
+      .stat-number {
+        font-size: clamp(3.8rem, 10vw, 6.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        font-family: var(--font-mono);
+        color: var(--accent);
+        text-shadow: 0 6px 24px rgba(20, 16, 8, 0.45);
+      }
+
+      .stat-label {
+        font-size: 1.05rem;
+        color: var(--muted);
+      }
+
+      .accent {
+        color: var(--accent);
+        font-weight: 500;
+      }
+
+      .meta {
+        display: grid;
+        gap: 8px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .meta strong {
+        color: var(--ink);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        border: 1px solid var(--outline);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-family: var(--font-mono);
+        color: var(--muted);
+      }
+
+      .footer {
+        margin-top: 8px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .page-footer {
+        margin-top: 12px;
+        font-size: 0.72rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(233, 235, 239, 0.55);
+        font-family: var(--font-mono);
+        text-align: center;
+        margin-top: auto;
+      }
+
+      .page-footer::before {
+        content: "";
+        display: block;
+        height: 1px;
+        width: min(360px, 90%);
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        background-size: 200% 100%;
+        opacity: 0.35;
+        margin: 0 auto 12px;
+        animation: footnoteSweep 6s ease-in-out infinite;
+      }
+
+      @keyframes footnoteSweep {
+        0% {
+          background-position: 0% 50%;
+          opacity: 0.2;
+        }
+        50% {
+          background-position: 100% 50%;
+          opacity: 0.45;
+        }
+        100% {
+          background-position: 0% 50%;
+          opacity: 0.2;
+        }
+      }
+
+      .accent-bar {
+        height: 4px;
+        width: 88px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        border-radius: 999px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .accent-bar::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(225, 232, 242, 0.9), transparent);
+        transform: translateX(-120%);
+        animation: underlineSweep 4.6s ease-in-out infinite;
+        opacity: 0.9;
+      }
+
+      @keyframes underlineSweep {
+        0% {
+          transform: translateX(-120%);
+        }
+        55% {
+          transform: translateX(120%);
+        }
+        100% {
+          transform: translateX(120%);
+        }
+      }
+
+      @media (min-width: 760px) {
+        .hero {
+          grid-template-columns: 1.1fr 1fr;
+          align-items: center;
+        }
+
+        .hero.reverse {
+          grid-template-columns: 1fr 1.1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 24px 12px 36px;
+        }
+
+        .chip {
+          font-size: 0.82rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <div class="page-title"><span class="page-title-text">God's Strength</span></div>
+      <section class="hero">
+        <div class="headline">
+          <span class="eyebrow">Pushing Through...</span>
+          <h1>Days since the accident</h1>
+          <p>Time keeps moving. This is a simple, steady counter to help you track it.</p>
+          <div class="accent-bar" aria-hidden="true"></div>
+        </div>
+
+        <div class="card" role="status" aria-live="polite">
+          <span class="ring" aria-hidden="true"></span>
+          <div class="stat">
+            <div id="days" class="stat-number">—</div>
+            <div class="stat-label">days since <span class="accent">April 3, 2019</span></div>
+          </div>
+          <div class="meta">
+            <div><strong>Accident date:</strong> April 3, 2019</div>
+            <div><strong>Last updated:</strong> <span id="updated">—</span></div>
+          </div>
+          <div class="chips" aria-label="Key milestones">
+            <span class="chip" id="years">— years</span>
+            <span class="chip" id="months">— months</span>
+            <span class="chip" id="weeks">— weeks</span>
+          </div>
+          <div class="footer">Every day counts. Keep going.</div>
+        </div>
+      </section>
+
+      <section class="hero reverse">
+        <div class="card" role="status" aria-live="polite">
+          <span class="ring" aria-hidden="true"></span>
+          <div class="stat">
+            <div id="days-they" class="stat-number">—</div>
+            <div class="stat-label">days since <span class="accent">August 22, 2024</span></div>
+          </div>
+          <div class="meta">
+            <div><strong>Arrival date:</strong> August 22, 2024</div>
+            <div><strong>Last updated:</strong> <span id="updated-they">—</span></div>
+          </div>
+          <div class="chips" aria-label="Key milestones">
+            <span class="chip" id="years-they">— years</span>
+            <span class="chip" id="months-they">— months</span>
+            <span class="chip" id="weeks-they">— weeks</span>
+          </div>
+          <div class="footer">God will show us the way out. All we have to do is to Listen.</div>
+        </div>
+
+        <div class="headline">
+          <span class="eyebrow">Pushing Through...</span>
+          <h1>Days since They came</h1>
+          <p>No man is stronger than God.</p>
+          <div class="accent-bar" aria-hidden="true"></div>
+        </div>
+      </section>
+      <div class="page-footer">© 2026 BY BLUE LABS</div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      const accidentDate = new Date("2019-04-03T00:00:00");
+      const arrivalDate = new Date("2024-08-22T00:00:00");
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat().format(value);
+      }
+
+      function setCounter({
+        baseDate,
+        daysId,
+        weeksId,
+        monthsId,
+        yearsId,
+        updatedId,
+      }) {
+        const now = new Date();
+        const diffMs = now - baseDate;
+        const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const weeks = Math.floor(days / 7);
+        const months = Math.floor(days / 30.4375);
+        const years = Math.floor(days / 365.25);
+
+        document.getElementById(daysId).textContent = formatNumber(days);
+        document.getElementById(weeksId).textContent = `${formatNumber(weeks)} weeks`;
+        document.getElementById(monthsId).textContent = `${formatNumber(months)} months`;
+        document.getElementById(yearsId).textContent = `${formatNumber(years)} years`;
+        document.getElementById(updatedId).textContent = now.toLocaleString();
+      }
+
+      function updateCounter() {
+        setCounter({
+          baseDate: accidentDate,
+          daysId: "days",
+          weeksId: "weeks",
+          monthsId: "months",
+          yearsId: "years",
+          updatedId: "updated",
+        });
+        setCounter({
+          baseDate: arrivalDate,
+          daysId: "days-they",
+          weeksId: "weeks-they",
+          monthsId: "months-they",
+          yearsId: "years-they",
+          updatedId: "updated-they",
+        });
+      }
+
+      updateCounter();
+      setInterval(updateCounter, 60 * 1000);
+
+      if (window.gsap) {
+        gsap.to(".ring", {
+          duration: 4,
+          boxShadow: "0 0 0 1px rgba(160, 170, 185, 0.35), 0 0 26px rgba(120, 130, 150, 0.28)",
+          borderColor: "rgba(190, 200, 215, 0.35)",
+          opacity: 0.95,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          stagger: 0.3,
+        });
+      }
+    </script>
+  </body>
+</html>
